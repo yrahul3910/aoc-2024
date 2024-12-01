@@ -5,16 +5,18 @@ import gleam/result
 import gleam/string
 import simplifile.{read}
 
+fn get(val: Result(Int, Nil)) -> Int {
+  result.unwrap(val, 0)
+}
+
 fn read_input() -> #(List(Int), List(Int)) {
   read("input.txt")
   |> result.unwrap("")
   |> string.split("\n")
   |> list.map(string.split(_, "   "))
   |> list.map(list.map(_, int.parse))
-  |> list.map(list.map(_, result.unwrap(_, 0)))
-  |> list.map(fn(x) {
-    #(result.unwrap(list.first(x), 0), result.unwrap(list.last(x), 0))
-  })
+  |> list.map(list.map(_, get))
+  |> list.map(fn(x) { #(get(list.first(x)), get(list.last(x))) })
   |> list.unzip
 }
 
@@ -25,8 +27,8 @@ pub fn part1() -> Int {
   }
   |> fn(x) { list.zip(x.0, x.1) }
   |> list.map(fn(x) { x.1 - x.0 })
-  |> list.map(int.absolute_value)
-  |> int.sum
+  |> list.reduce(fn(acc, x) { acc + int.absolute_value(x) })
+  |> get
 }
 
 pub fn part2() {
