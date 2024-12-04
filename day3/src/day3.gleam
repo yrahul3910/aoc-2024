@@ -64,5 +64,8 @@ pub fn part2() -> Int {
 
 pub fn main() {
   let p1 = part1()
+  let p2 = part2()
+
   io.debug("Part 1: " <> int.to_string(p1))
+  io.debug("Part 2: " <> int.to_string(p2))
 }
