@@ -18,4 +18,4 @@ jobs:
           gleam-version: "1.6.2"
           rebar3-version: "3"
           # elixir-version: "1.15.4"
-      - run: cd day3 && gleam deps download && gleam test && gleam format --check src test
+      - run: cd day3 && gleam deps download && gleam fix && gleam test && gleam format --check src test
