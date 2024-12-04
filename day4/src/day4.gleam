@@ -57,19 +57,11 @@ fn n_neighbors(arr: List(List(String)), i: Int, j: Int) -> Int {
 fn part1_helper(arr: List(List(String)), i: Int, j: Int, sum: Int) -> Int {
   let nc = list.length(result.unwrap(list.first(arr), [""]))
 
-  case i {
-    1 -> {
-      case j {
-        1 -> sum
-        b -> part1_helper(arr, i, b - 1, sum + n_neighbors(arr, 1, b))
-      }
-    }
-    a -> {
-      case j {
-        1 -> part1_helper(arr, a - 1, nc, sum + n_neighbors(arr, a, 1))
-        b -> part1_helper(arr, a, b - 1, sum + n_neighbors(arr, a, b))
-      }
-    }
+  case i, j {
+    1, 1 -> sum
+    1, b -> part1_helper(arr, i, b - 1, sum + n_neighbors(arr, 1, b))
+    a, 1 -> part1_helper(arr, a - 1, nc, sum + n_neighbors(arr, a, 1))
+    a, b -> part1_helper(arr, a, b - 1, sum + n_neighbors(arr, a, b))
   }
 }
 
