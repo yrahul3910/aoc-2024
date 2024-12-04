@@ -16,14 +16,14 @@ fn match_to_ints(match: regexp.Match) -> List(Int) {
   match.submatches
   |> list.map(option.unwrap(_, "0"))
   |> list.map(int.parse)
-  |> list.map(result.unwrap(_, -1))
+  |> list.map(result.unwrap(_, 0))
 }
 
 fn get_all_matches(rgx: regexp.Regexp, input: String) -> List(Int) {
   regexp.scan(rgx, input)
   |> list.map(match_to_ints)
   |> list.map(list.reduce(_, fn(acc, cur) { acc * cur }))
-  |> list.map(result.unwrap(_, -2))
+  |> list.map(result.unwrap(_, 0))
 }
 
 fn basic_match(str: String) -> Int {
@@ -31,13 +31,13 @@ fn basic_match(str: String) -> Int {
     regexp.compile("mul\\((\\d+),(\\d+)\\)", with: regexp.Options(False, False))
 
   case val {
-    Ok(rgx) -> str |> get_all_matches(rgx, _) |> int.sum
+    Ok(rgx) -> get_all_matches(rgx, str) |> int.sum
     Error(_) -> 0
   }
 }
 
 pub fn part1() -> Int {
-  basic_match(read_input())
+  read_input() |> basic_match
 }
 
 fn part2_helper(str: String, acc: Int) -> Int {
@@ -60,8 +60,7 @@ fn part2_helper(str: String, acc: Int) -> Int {
 }
 
 pub fn part2() -> Int {
-  read_input()
-  |> part2_helper(0)
+  read_input() |> part2_helper(0)
 }
 
 pub fn main() {
