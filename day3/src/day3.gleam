@@ -44,15 +44,17 @@ fn part2_helper(str: String, acc: Int) -> Int {
   case str {
     "" -> acc
     val -> {
-      string.split_once(val, "don't()")
-      |> result.unwrap(#("", ""))
-      |> fn(parts) {
-        #(
-          parts.0,
-          result.unwrap(string.split_once(parts.1, "do()"), #("", "")).1,
-        )
-      }
-      |> fn(parts) { part2_helper(parts.1, acc + basic_match(parts.0)) }
+      let parts =
+        string.split_once(val, "don't()")
+        |> result.unwrap(#("", ""))
+        |> fn(parts) {
+          #(
+            parts.0,
+            result.unwrap(string.split_once(parts.1, "do()"), #("", "")).1,
+          )
+        }
+
+      part2_helper(parts.1, acc + basic_match(parts.0))
     }
   }
 }
