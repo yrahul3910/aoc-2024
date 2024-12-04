@@ -4,6 +4,7 @@ import gleam/list
 import gleam/option
 import gleam/regexp
 import gleam/result
+import gleam/string
 import simplifile.{read}
 
 fn read_input() -> String {
@@ -25,27 +26,40 @@ fn get_all_matches(rgx: regexp.Regexp, input: String) -> List(Int) {
   |> list.map(result.unwrap(_, -2))
 }
 
-pub fn part1() -> Int {
+fn basic_match(str: String) -> Int {
   let val =
     regexp.compile("mul\\((\\d+),(\\d+)\\)", with: regexp.Options(False, False))
 
   case val {
-    Ok(rgx) -> read_input() |> get_all_matches(rgx, _) |> int.sum
+    Ok(rgx) -> str |> get_all_matches(rgx, _) |> int.sum
     Error(_) -> 0
   }
 }
 
-pub fn part2() -> Int {
-  let val =
-    regexp.compile(
-      "(?:^|do\\(\\)).*mul\\((\\d+),(\\d+)\\)(?:don't\\(\\)|$)",
-      with: regexp.Options(False, False),
-    )
+pub fn part1() -> Int {
+  basic_match(read_input())
+}
 
-  case val {
-    Ok(rgx) -> read_input() |> get_all_matches(rgx, _) |> int.sum
-    Error(_) -> 0
+fn part2_helper(str: String, acc: Int) -> Int {
+  case str {
+    "" -> acc
+    val -> {
+      string.split_once(val, "don't()")
+      |> result.unwrap(#("", ""))
+      |> fn(parts) {
+        #(
+          parts.0,
+          result.unwrap(string.split_once(parts.1, "do()"), #("", "")).1,
+        )
+      }
+      |> fn(parts) { part2_helper(parts.1, acc + basic_match(parts.0)) }
+    }
   }
+}
+
+pub fn part2() -> Int {
+  read_input()
+  |> part2_helper(0)
 }
 
 pub fn main() {
