@@ -15,18 +15,10 @@ fn read_input() -> List(List(String)) {
   |> list.map(string.split(_, ""))
 }
 
-fn at(arr: List(String), i: Int) -> String {
+fn at(arr: List(a), i: Int) -> Result(a, Nil) {
   list.take(arr, i)
   |> list.drop(i - 1)
   |> list.first
-  |> result.unwrap("")
-}
-
-fn lat(arr: List(List(String)), i: Int) -> List(String) {
-  list.take(arr, i)
-  |> list.drop(i - 1)
-  |> list.first
-  |> result.unwrap([])
 }
 
 fn get(arr: List(List(String)), i: Int, j: Int) -> option.Option(String) {
@@ -34,7 +26,8 @@ fn get(arr: List(List(String)), i: Int, j: Int) -> option.Option(String) {
   let nc = list.length(result.unwrap(list.first(arr), [""]))
 
   case 1 <= i && i <= nr && 1 <= j && j <= nc {
-    True -> option.Some(at(lat(arr, i), j))
+    True ->
+      option.Some(result.unwrap(at(result.unwrap(at(arr, i), [""]), j), ""))
     False -> option.None
   }
 }
