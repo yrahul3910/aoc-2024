@@ -1,3 +1,4 @@
+import day7.{part1, part2}
 import gleeunit
 import gleeunit/should
 
@@ -5,8 +6,12 @@ pub fn main() {
   gleeunit.main()
 }
 
-// gleeunit test functions end in `_test`
-pub fn hello_world_test() {
-  1
-  |> should.equal(1)
+pub fn part1_test() {
+  part1()
+  |> should.equal(3749)
+}
+
+pub fn part2_test() {
+  part2()
+  |> should.equal(11_387)
 }

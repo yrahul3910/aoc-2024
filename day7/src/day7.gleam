@@ -1,7 +1,6 @@
 import gleam/int
 import gleam/io
 import gleam/list
-import gleam/option.{type Option}
 import gleam/result
 import gleam/string
 import simplifile.{read}
@@ -67,10 +66,9 @@ fn eval(lst: List(String)) -> Int {
       val -> {
         case string.last(acc) {
           Ok("+") | Ok("*") -> {
-            io.debug(expr(acc <> val))
             expr(acc <> val)
           }
-          Ok(v) -> acc <> v
+          Ok(_) -> acc <> cur
           Error(_) -> panic
         }
       }
@@ -92,15 +90,9 @@ fn read_input() -> List(#(String, String)) {
   })
 }
 
-fn run(
-  inp: List(#(String, String)),
-  ops: List(String),
-  old_ops: Option(List(String)),
-) -> Int {
+fn run(inp: List(#(String, String)), ops: List(String)) -> Int {
   inp
   |> list.map(fn(line) {
-    io.debug("---\n")
-    io.debug(line)
     let target = line.0
     let candidate = line.1
 
@@ -113,28 +105,20 @@ fn run(
 
     cur_choices
     |> list.map(fn(choice) {
-      case old_ops {
-        option.None -> {
-          let to_join =
-            list.zip(parts, choice)
-            |> list.map(fn(t) { [t.0, t.1] })
-            |> list.flatten
+      let to_join =
+        list.zip(parts, choice)
+        |> list.map(fn(t) { [t.0, t.1] })
+        |> list.flatten
 
-          let expr =
-            list.flatten([to_join, [parts |> list.last |> result.unwrap("0")]])
+      let expr =
+        list.flatten([to_join, [parts |> list.last |> result.unwrap("0")]])
 
-          io.debug(expr)
-
-          let res = eval(expr)
-          io.debug(res)
-          case res == int.parse(target) |> result.unwrap(0) {
-            True -> {
-              res
-            }
-            False -> 0
-          }
+      let res = eval(expr)
+      case res == int.parse(target) |> result.unwrap(0) {
+        True -> {
+          res
         }
-        _ -> 0
+        False -> 0
       }
     })
     |> list.reduce(fn(acc, cur) { int.max(acc, cur) })
@@ -146,11 +130,18 @@ fn run(
 pub fn part1() {
   let inp = read_input()
   let ops = ["+", "*"]
-  let old_ops = option.None
 
-  run(inp, ops, old_ops)
+  run(inp, ops)
+}
+
+pub fn part2() {
+  let inp = read_input()
+  let ops = ["+", "*", "|"]
+
+  run(inp, ops)
 }
 
 pub fn main() {
   io.debug(part1())
+  io.debug(part2())
 }
