@@ -1,7 +1,6 @@
 import gleam/int
 import gleam/io
 import gleam/list
-import gleam/result
 import gleam/string
 import simplifile.{read}
 
@@ -37,19 +36,31 @@ fn at(lst: List(a), i: Int) -> a {
   }
 }
 
+fn unsafe_unwrap(res: Result(a, b)) -> a {
+  case res {
+    Ok(val) -> val
+    _ -> panic
+  }
+}
+
+fn just(inp: a, func: fn(a) -> Result(b, c)) -> b {
+  inp
+  |> func
+  |> unsafe_unwrap
+}
+
 fn expr(e: String) -> String {
   let op_idx =
     e
     |> string.to_graphemes
     |> list.index_map(fn(x, i) { #(x, i) })
     |> list.filter(fn(t) { t.0 == "+" || t.0 == "*" })
-    |> list.first
-    |> result.unwrap(#("", -1))
+    |> just(list.first)
 
   let parts = string.split(e, on: op_idx.0)
 
-  let op1 = at(parts, 0) |> int.parse |> result.unwrap(0)
-  let op2 = at(parts, 1) |> int.parse |> result.unwrap(0)
+  let op1 = at(parts, 0) |> just(int.parse)
+  let op2 = at(parts, 1) |> just(int.parse)
   case op_idx.0 {
     "+" -> int.to_string(op1 + op2)
     "*" -> int.to_string(op1 * op2)
@@ -65,23 +76,20 @@ fn eval(lst: List(String)) -> Int {
       "|" -> acc
       val -> {
         case string.last(acc) {
-          Ok("+") | Ok("*") -> {
-            expr(acc <> val)
-          }
+          Ok("+") | Ok("*") -> expr(acc <> val)
           Ok(_) -> acc <> cur
           Error(_) -> panic
         }
       }
     }
   })
-  |> result.unwrap("-1")
-  |> int.parse
-  |> result.unwrap(-1)
+  |> unsafe_unwrap
+  |> just(int.parse)
 }
 
 fn read_input() -> List(#(String, String)) {
-  read("tiny.txt")
-  |> result.unwrap("")
+  "tiny.txt"
+  |> just(read)
   |> string.split("\n")
   |> list.map(fn(row) {
     row
@@ -100,7 +108,6 @@ fn run(inp: List(#(String, String)), ops: List(String)) -> Int {
       candidate |> string.to_graphemes |> list.count(fn(c) { c == " " })
 
     let cur_choices = ops |> list.repeat(n_spots) |> product
-
     let parts = candidate |> string.split(" ")
 
     cur_choices
@@ -110,19 +117,16 @@ fn run(inp: List(#(String, String)), ops: List(String)) -> Int {
         |> list.map(fn(t) { [t.0, t.1] })
         |> list.flatten
 
-      let expr =
-        list.flatten([to_join, [parts |> list.last |> result.unwrap("0")]])
+      let expr = list.flatten([to_join, [parts |> just(list.last)]])
 
       let res = eval(expr)
-      case res == int.parse(target) |> result.unwrap(0) {
-        True -> {
-          res
-        }
+      case res == target |> just(int.parse) {
+        True -> res
         False -> 0
       }
     })
     |> list.reduce(fn(acc, cur) { int.max(acc, cur) })
-    |> result.unwrap(0)
+    |> unsafe_unwrap
   })
   |> int.sum
 }
