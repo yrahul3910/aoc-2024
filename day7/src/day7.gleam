@@ -23,24 +23,19 @@ fn product(lists: List(List(a))) -> List(List(a)) {
   }
 }
 
-fn at(lst: List(a), i: Int) -> a {
-  lst
-  |> list.take(i + 1)
-  |> list.drop(i)
-  |> list.first
-  |> fn(r) {
-    case r {
-      Ok(val) -> val
-      Error(_) -> panic
-    }
-  }
-}
-
 fn unsafe_unwrap(res: Result(a, b)) -> a {
   case res {
     Ok(val) -> val
     _ -> panic
   }
+}
+
+fn at(lst: List(a), i: Int) -> a {
+  lst
+  |> list.take(i + 1)
+  |> list.drop(i)
+  |> list.first
+  |> unsafe_unwrap
 }
 
 fn just(inp: a, func: fn(a) -> Result(b, c)) -> b {
