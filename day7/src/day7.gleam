@@ -30,24 +30,20 @@ fn unsafe_unwrap(res: Result(a, b)) -> a {
   }
 }
 
+fn just(inp: a, func: fn(a) -> Result(b, c)) -> b {
+  func(inp) |> unsafe_unwrap
+}
+
 fn at(lst: List(a), i: Int) -> a {
   lst
   |> list.take(i + 1)
   |> list.drop(i)
-  |> list.first
-  |> unsafe_unwrap
-}
-
-fn just(inp: a, func: fn(a) -> Result(b, c)) -> b {
-  inp
-  |> func
-  |> unsafe_unwrap
+  |> just(list.first)
 }
 
 fn expr(e: String) -> String {
   let op_idx =
-    e
-    |> string.to_graphemes
+    string.to_graphemes(e)
     |> list.index_map(fn(x, i) { #(x, i) })
     |> list.filter(fn(t) { t.0 == "+" || t.0 == "*" })
     |> just(list.first)
