@@ -59,7 +59,6 @@ fn dfs(
   y: Int,
   stop_on_visited: Bool,
 ) -> #(Int, List(List(Bool))) {
-  // Check if already visited and should stop
   case
     at(visited, x)
     |> at(y)
@@ -67,10 +66,8 @@ fn dfs(
   {
     True -> #(score, visited)
     False -> {
-      // Mark as visited
       let new_visited = set(visited, x, y, True)
 
-      // Check if reached peak
       case
         at(grid, x)
         |> at(y)
@@ -78,7 +75,6 @@ fn dfs(
       {
         True -> #(score + 1, new_visited)
         False -> {
-          // Define a helper function to reduce repetition
           let explore = fn(
             dx: Int,
             dy: Int,
@@ -109,7 +105,6 @@ fn dfs(
             }
           }
 
-          // Explore in all four directions sequentially
           let #(s1, v1) = explore(1, 0, score, new_visited)
           let #(s2, v2) = explore(-1, 0, s1, v1)
           let #(s3, v3) = explore(0, 1, s2, v2)
