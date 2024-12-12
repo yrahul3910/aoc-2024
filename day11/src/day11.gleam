@@ -17,11 +17,6 @@ fn just(inp: a, func: fn(a) -> Result(b, c)) -> b {
 }
 
 fn evolve(arr: List(#(Int, Int)), dp: dict.Dict(Int, List(#(Int, Int)))) {
-  // io.debug("arr = ")
-  // io.debug(arr)
-  // io.debug("\ndp = ")
-  // io.debug(dp)
-
   let ctr: dict.Dict(Int, Int) =
     arr
     |> list.group(fn(t) { t.0 })
