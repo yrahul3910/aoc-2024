@@ -91,12 +91,13 @@ for i in range(m):
 sets = dsu.finalize()
 
 def part1():
-    cost = sum(area(s) * perimeter(s) for s in sets)
-    print(cost)
+    return sum(area(s) * perimeter(s) for s in sets)
 
 def part2():
-    cost = sum(area(s) * edges(s) for s in sets)
-    print(cost)
+    return sum(area(s) * edges(s) for s in sets)
 
-part1()
-part2()
+def test_part1():
+    assert part1() == 1450816
+
+def test_part2():
+    assert part2() == 865662
