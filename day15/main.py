@@ -7,8 +7,8 @@ def inb(grid, i, j):
 
 content = open(sys.argv[-1]).read()
 grid, moves = content.split("\n\n")
+moves = moves.replace("\n", "")
 
-grid = [list(c.strip()) for c in grid.split("\n")]
 r = [i for i, row in enumerate(grid) if '@' in row][0]
 c = [j for j, cell in enumerate(grid[r]) if cell == '@'][0]
 d = {
@@ -18,40 +18,40 @@ d = {
     "v": (1, 0)
 }
 
-for move in moves:
-    print(move)
+def get(grid, r, c):
+    if inb(grid, r, c):
+        return grid[r][c]
+    return '#'
+
+def can_move(r, c, move):
+    global grid
+
     dx, dy = d[move]
+    
+    if all([
+        get(grid, r + dx, c + dy) != '[' or (can_move(r + dx, c + dy + 1, move) and can_move(r + dx, c + dy, move)),
+        get(grid, r + dx, c + dy) != ']' or (can_move(r + dx, c + dy - 1, move) and can_move(r + dx, c + dy, move)),
+        get(grid, r + dx, c + dy) != '#'
+        ]):
+        grid[r + dx][c + dy], grid[r][c] = grid[r][c], grid[r + dx][c + dy]
+        return True
+    return False
 
-    if grid[r + dx][c + dy] == '#':
-        continue
-    if grid[r + dx][c + dy] == 'O':
-        i, j = r + dx, c + dy
-        while inb(grid, i, j) and grid[i][j] == 'O':
-            i += dx
-            j += dy
 
-        if grid[i][j] == '.':
-            grid[i][j] = 'O'
-            grid[r + dx][c + dy] = '@'
-            grid[r][c] = '.'
+grid = grid.translate(str.maketrans(
+        {'#':'##', '.':'..', 'O':'[]', '@':'@.'}))
+grid = [list(row.strip()) for row in grid.split("\n")]
 
-            r, c = r + dx, c + dy
+for move in moves:
+    if can_move(r, c, move):
+        dx, dy = d[move]
+        r += dx
+        c += dy
 
-    else:
-        grid[r + dx][c + dy] = '@'
-        grid[r][c] = '.'
-
-        r, c = r + dx, c + dy
-
-    print("\n".join(["".join(row) for row in grid]))
-    print()
-
-print("\n".join(["".join(row) for row in grid]))
-print()
 _sum = 0
 for i in range(len(grid)):
     for j in range(len(grid[0])):
-        if grid[i][j] == 'O':
+        if grid[i][j] == '[':
             _sum += 100 * i + j
 
 print(_sum)
