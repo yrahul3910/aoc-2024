@@ -1,4 +1,6 @@
 import gleam/io
+import gleam/string
+import gleam/int
 import gleam/list
 import gleam/queue
 import simplifile.{read}
@@ -53,14 +55,13 @@ fn mkgrid() {
 }
 
 fn bfs_helper(coords: List(#(Int, Int)), grid: List(List(Int)), q: queue.Queue(#(Int, Int, Int))) {
-  let MAX = 70
   case queue.is_empty(q) {
     True -> -1
     False -> {
       let #(#(x, y, d), q) = q |> just(queue.pop_front)
 
       case x, y {
-        MAX, MAX -> d
+        70, 70 -> d
         _, _ -> {
           let q1 = [#(0, 1), #(1, 0), #(0, -1), #(-1, 0)]
             |> list.map(fn(t) {
@@ -69,8 +70,8 @@ fn bfs_helper(coords: List(#(Int, Int)), grid: List(List(Int)), q: queue.Queue(#
             |> list.filter(fn(t) {
               t.0 >= 0 && 
               t.1 >= 0 && 
-              t.0 <= MAX && 
-              t.1 <= MAX && 
+              t.0 <= 70 && 
+              t.1 <= 70 && 
               at(at(grid, t.0), t.1) == 0 && 
               !list.contains(coords, #(t.0, t.1))
             })
@@ -94,12 +95,7 @@ fn bfs(coords: List(#(Int, Int))) {
 
 pub fn part1() {
   let coords = read_input()
-  bfs(coords 
-    |> list.map(fn(t) {
-      #(at(t, 0), at(t, 1))
-    })
-    |> list.take(1024)
-  )
+  bfs(coords |> list.take(1024))
 }
 
 fn part2_helper(coords: List(#(Int, Int))) {
