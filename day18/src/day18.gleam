@@ -60,7 +60,7 @@ fn bfs_helper(coords: List(#(Int, Int)), grid: List(List(Int)), q: queue.Queue(#
       let #(#(x, y, d), q) = q |> just(queue.pop_front)
 
       case x, y {
-        GRIDSIZE - 1, GRIDSIZE - 1 -> d
+        {GRIDSIZE - 1}, {GRIDSIZE - 1} -> d
         _, _ -> {
           let q1 = [#(0, 1), #(1, 0), #(0, -1), #(-1, 0)]
             |> list.map(fn(t) {
