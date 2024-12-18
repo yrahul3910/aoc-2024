@@ -53,14 +53,14 @@ fn mkgrid() {
 }
 
 fn bfs_helper(coords: List(#(Int, Int)), grid: List(List(Int)), q: queue.Queue(#(Int, Int, Int))) {
-  let GRID_SIZE = 71
+  let GRIDSIZE = 71
   case queue.is_empty(q) {
     True -> -1
     False -> {
       let #(#(x, y, d), q) = q |> just(queue.pop_front)
 
       case x, y {
-        GRID_SIZE - 1, GRID_SIZE - 1 -> d
+        GRIDSIZE - 1, GRIDSIZE - 1 -> d
         _, _ -> {
           let q1 = [#(0, 1), #(1, 0), #(0, -1), #(-1, 0)]
             |> list.map(fn(t) {
@@ -69,8 +69,8 @@ fn bfs_helper(coords: List(#(Int, Int)), grid: List(List(Int)), q: queue.Queue(#
             |> list.filter(fn(t) {
               t.0 >= 0 && 
               t.1 >= 0 && 
-              t.0 < GRID_SIZE && 
-              t.1 < GRID_SIZE && 
+              t.0 < GRIDSIZE && 
+              t.1 < GRIDSIZE && 
               at(at(grid, t.0), t.1) == 0 && 
               !list.contains(coords, #(t.0, t.1))
             })
