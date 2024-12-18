@@ -1,8 +1,8 @@
-import gleam/io
-import gleam/string
+import gleam/deque
 import gleam/int
+import gleam/io
 import gleam/list
-import gleam/queue
+import gleam/string
 import simplifile.{read}
 
 fn read_input() -> List(#(Int, Int)) {
@@ -54,32 +54,37 @@ fn mkgrid() {
   list.repeat(list.repeat(0, 71), 71)
 }
 
-fn bfs_helper(coords: List(#(Int, Int)), grid: List(List(Int)), q: queue.Queue(#(Int, Int, Int))) {
-  case queue.is_empty(q) {
+fn bfs_helper(
+  coords: List(#(Int, Int)),
+  grid: List(List(Int)),
+  q: deque.Deque(#(Int, Int, Int)),
+) {
+  case deque.is_empty(q) {
     True -> -1
     False -> {
-      let #(#(x, y, d), q) = q |> just(queue.pop_front)
+      let #(#(x, y, d), q) = q |> just(deque.pop_front)
 
       case x, y {
         70, 70 -> d
         _, _ -> {
-          let q1 = [#(0, 1), #(1, 0), #(0, -1), #(-1, 0)]
-            |> list.map(fn(t) {
-              #(x + t.0, y + t.1, d + 1)
-            })
+          let #(q1, grid) =
+            [#(0, 1), #(1, 0), #(0, -1), #(-1, 0)]
+            |> list.map(fn(t) { #(x + t.0, y + t.1, d + 1) })
             |> list.filter(fn(t) {
-              t.0 >= 0 && 
-              t.1 >= 0 && 
-              t.0 <= 70 && 
-              t.1 <= 70 && 
-              at(at(grid, t.0), t.1) == 0 && 
-              !list.contains(coords, #(t.0, t.1))
+              t.0 >= 0
+              && t.1 >= 0
+              && t.0 <= 70
+              && t.1 <= 70
+              && at(at(grid, t.0), t.1) == 0
+              && !list.contains(coords, #(t.0, t.1))
             })
-            
-           let grid = set(grid, x, y, 1)
-           let q = list.flatten([queue.to_list(q), q1]) |> queue.from_list
-           
-           bfs_helper(coords, grid, q)
+            |> list.fold(#([], grid), fn(acc, t) {
+              #([t, ..acc.0], set(acc.1, t.0, t.1, 1))
+            })
+
+          let q = list.flatten([deque.to_list(q), q1]) |> deque.from_list
+
+          bfs_helper(coords, grid, q)
         }
       }
     }
@@ -88,8 +93,8 @@ fn bfs_helper(coords: List(#(Int, Int)), grid: List(List(Int)), q: queue.Queue(#
 
 fn bfs(coords: List(#(Int, Int))) {
   let grid = set(mkgrid(), 0, 0, 1)
-  let q = queue.from_list([#(0, 0, 0)])
-  
+  let q = deque.from_list([#(0, 0, 0)])
+
   bfs_helper(coords, grid, q)
 }
 
@@ -102,7 +107,7 @@ fn part2_helper(coords: List(#(Int, Int))) {
   let len = coords |> list.length
   case bfs(coords) {
     -1 -> part2_helper(coords |> list.take(len - 1))
-    d -> len
+    _d -> len
   }
 }
 
@@ -115,4 +120,3 @@ pub fn part2() {
 pub fn main() {
   io.debug(part1())
 }
-
