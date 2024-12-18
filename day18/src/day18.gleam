@@ -101,8 +101,8 @@ pub fn part1() {
 fn part2_helper(coords: List(#(Int, Int))) {
   let len = coords |> list.length
   case bfs(coords) {
-    d -> len
     -1 -> part2_helper(coords |> list.take(len - 1))
+    d -> len
   }
 }
 
