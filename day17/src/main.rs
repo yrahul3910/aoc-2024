@@ -1,5 +1,20 @@
 use std::fs;
 
+fn get_input() -> Vec<u64> {
+    let filename = "input.txt";
+    let contents = fs::read_to_string(filename).expect("File I/O error");
+    contents
+        .split('\n')
+        .last()
+        .unwrap()
+        .split(':')
+        .last()
+        .unwrap()
+        .split(',')
+        .map(|x| x.trim().parse::<u64>().unwrap())
+        .collect::<Vec<u64>>()
+}
+
 fn cmb(op: u64, ax: u64, bx: u64, cx: u64) -> u64 {
     match op {
         0..=3 => op,
@@ -37,19 +52,7 @@ fn run(prog: &[u64], a: u64) -> Vec<u64> {
 }
 
 fn part2() -> Vec<u64> {
-    let filename = "input.txt";
-    let contents = fs::read_to_string(filename).expect("File I/O error");
-    let prog = contents
-        .split('\n')
-        .last()
-        .unwrap()
-        .split(':')
-        .last()
-        .unwrap()
-        .split(',')
-        .map(|x| x.trim().parse::<u64>().unwrap())
-        .collect::<Vec<u64>>();
-
+    let prog = get_input();
     let mut results: Vec<u64> = Vec::new();
     let mut todo: Vec<(i64, u64)> = vec![(-1, 0)];
     while let Some((i, a)) = todo.pop() {
