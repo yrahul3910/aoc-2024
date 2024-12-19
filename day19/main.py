@@ -1,16 +1,15 @@
-from tqdm import tqdm
-
 dp = {}
 
-def valid(string):
+# Part 1: fn = any; part 2: fn = sum
+def valid(string, fn=sum):
     if string in dp:
         return dp[string]
 
     if string[0] not in pat_dict:
         return False
 
-    res = any([
-        string == w or string.startswith(w) and valid(string[len(w):])
+    res = fn([
+        string == w or string.startswith(w) and valid(string[len(w):], fn)
         for w in pat_dict[string[0]]
     ])
     dp[string] = res
@@ -28,9 +27,8 @@ pat_dict = {
 pat_dict = { k: v for k, v in pat_dict.items() if v }
 
 count = 0
-for w in tqdm(want):
+for w in want:
     dp = {}
-    if valid(w):
-        count += 1
+    count += valid(w)
 
 print(count)
