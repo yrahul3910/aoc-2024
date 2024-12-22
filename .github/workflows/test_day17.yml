@@ -3,7 +3,7 @@ name: Day 17 Tests
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
 
 jobs:
