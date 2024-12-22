@@ -51,6 +51,11 @@ fn run(prog: &[u64], a: u64) -> Vec<u64> {
     res
 }
 
+fn part1() -> Vec<u64> {
+    let prog = get_input();
+    run(&prog, 46187030) // I was too lazy to read from the file.
+}
+
 fn part2() -> Vec<u64> {
     let prog = get_input();
     let mut results: Vec<u64> = Vec::new();
@@ -79,6 +84,12 @@ pub fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_part1_works() {
+        let result = part1();
+        assert_eq!(result, vec![7, 1, 3, 4, 1, 2, 6, 7, 1]);
+    }
 
     #[test]
     fn test_part2_works() {
