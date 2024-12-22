@@ -8,7 +8,7 @@ n = len(grid[0])
 start_row = [i for i, row in enumerate(grid) if 'S' in row][0]
 start_col = grid[start_row].index('S')
 
-def bfs():
+def bfs(max_dist):
     visited = [[0 for _ in range(n)] for _ in range(m)]
     visited[start_row][start_col] = 1
 
@@ -32,10 +32,20 @@ def bfs():
 
     count = 0
     for (x1, y1), (x2, y2) in itertools.combinations(dist.keys(), 2):
-        if 1 < abs(x1 - x2) + abs(y1 - y2) <= 2:  # for part 2, change this to 20
+        if 1 < abs(x1 - x2) + abs(y1 - y2) <= max_dist:
                 if abs(dist[(x1, y1)] - dist[(x2, y2)]) >= 100 + abs(x1 - x2) + abs(y1 - y2):
                     count += 1
 
     return count
 
-print(bfs())
+def part1():
+    return bfs(2)
+
+def part2():
+    return bfs(20)
+
+def test_part1():
+    assert part1() == 1346
+
+def test_part2():
+    assert part2() == 985482
