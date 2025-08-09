@@ -10,9 +10,10 @@
 
 struct Equation {
     char lhs[VAR_LENGTH];
-    int opcode;
+    char op[VAR_LENGTH];
     char rhs[VAR_LENGTH];
     char result[VAR_LENGTH];
+    int opcode;
 };
 
 /**
@@ -38,7 +39,7 @@ int or (int a, int b) { return a | b; }
 
 int xor (int a, int b) { return a ^ b; }
 
-    int opcode(char *op) {
+int opcode(char *op) {
     if (!strcmp(op, "AND")) {
         return 1;
     } else if (!strcmp(op, "OR")) {
@@ -76,10 +77,10 @@ int main() {
     }
 
     int values[MAX_SIZE];
-    struct Equation **equations = malloc(MAX_SIZE * sizeof(struct Equation *));
+    struct Equation** equations = (struct Equation**) malloc(MAX_SIZE * sizeof(struct Equation*));
 
     if (equations == NULL) {
-        fprintf(stderr, "Could not allocate memory.\n");
+        fprintf(stderr, "Failed to allocate memory.");
         exit(1);
     }
 
